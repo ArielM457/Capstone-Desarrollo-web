@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useThemeContext } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 const navLinks = [
   { to: '/', label: 'Inicio', fin: true },
@@ -30,7 +31,14 @@ function buildNavItem(itemData: { to: string; label: string; fin: boolean }, idx
 
 export function Header() {
   const { currentThemeMode, toggleThemeMode } = useThemeContext();
+  const { token, logout } = useAuth();
+  const navigate = useNavigate();
   const iconInfo = getIconLabel(currentThemeMode);
+
+  function handleLogout() {
+    logout();
+    navigate('/login');
+  }
 
   return (
     <header className="site-header">
@@ -46,16 +54,27 @@ export function Header() {
           </ul>
         </nav>
 
-        <button
-          className="theme-toggle-button"
-          onClick={toggleThemeMode}
-          aria-label={`Cambiar a ${iconInfo.label}`}
-        >
-          <span className="theme-toggle-button__icon" aria-hidden="true">
-            {iconInfo.icon}
-          </span>
-          <span className="theme-toggle-button__label">{iconInfo.label}</span>
-        </button>
+        <div className="site-header__actions">
+          <button
+            className="theme-toggle-button"
+            onClick={toggleThemeMode}
+            aria-label={`Cambiar a ${iconInfo.label}`}
+          >
+            <span className="theme-toggle-button__icon" aria-hidden="true">
+              {iconInfo.icon}
+            </span>
+            <span className="theme-toggle-button__label">{iconInfo.label}</span>
+          </button>
+          {token && (
+            <button
+              className="logout-button"
+              onClick={handleLogout}
+              aria-label="Cerrar sesión"
+            >
+              Salir
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );

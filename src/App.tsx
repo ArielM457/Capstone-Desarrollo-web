@@ -1,12 +1,14 @@
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Header } from './components/Header';
 
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
 const BookDetailPage = lazy(() => import('./pages/BookDetailPage').then(m => ({ default: m.BookDetailPage })));
 const BookReviewsPage = lazy(() => import('./pages/BookReviewsPage').then(m => ({ default: m.BookReviewsPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
 
 function PageLoadingFallback() {
   return (
@@ -14,6 +16,12 @@ function PageLoadingFallback() {
       <p className="book-detail__loading">Cargand...</p>
     </main>
   );
+}
+
+function ProtectedRoute() {
+  const { token } = useAuth();
+  if (!token) return <Navigate to="/login" replace />;
+  return <Outlet />;
 }
 
 function RootLayout() {
@@ -34,24 +42,39 @@ function RootLayout() {
 
 const router = createBrowserRouter([
   {
+    path: '/login',
+    element: (
+      <ThemeProvider>
+        <Suspense fallback={<PageLoadingFallback />}>
+          <LoginPage />
+        </Suspense>
+      </ThemeProvider>
+    ),
+  },
+  {
     path: '/',
     element: <RootLayout />,
     children: [
       {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'about',
-        element: <AboutPage />,
-      },
-      {
-        path: 'book/:bookId',
-        element: <BookDetailPage />,
+        element: <ProtectedRoute />,
         children: [
           {
-            path: 'reviews',
-            element: <BookReviewsPage />,
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: 'about',
+            element: <AboutPage />,
+          },
+          {
+            path: 'book/:bookId',
+            element: <BookDetailPage />,
+            children: [
+              {
+                path: 'reviews',
+                element: <BookReviewsPage />,
+              },
+            ],
           },
         ],
       },
@@ -60,20 +83,9 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
-
-
-//function App() {
-//  return (
-//    <BrowserRouter>
-//      <Header />
-//      <Routes>
-//        <Route path="/" element={<HomePage />} />
- //       <Route path="/about" element={<AboutPage />} />
-//        <Route path="/book/:bookId" element={<BookDetailPage />} />
-//      </Routes>
-//      <Footer />
-//    </BrowserRouter>
-//  );
-// }
