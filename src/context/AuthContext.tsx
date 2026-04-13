@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
 const AUTH_TOKEN_KEY = 'unilibrary-auth-token';
-const API_URL = 'http://localhost:3001';
+const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:3001/api';
 
 interface AuthContextValue {
   token: string | null;
@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   function logout() {
-    fetch(`${API_URL}/api/logout`, {
+    fetch(`${API_URL}/logout`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     }).catch(() => {});

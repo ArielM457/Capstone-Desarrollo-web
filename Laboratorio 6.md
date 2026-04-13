@@ -66,3 +66,9 @@ Se deployo el programa en azure static web apps siguientdo estos pasos
 - crear la aplicacion.
 - revisar el actions de github  para ver si es que hay algun problema en el pipe que creo static apps para deployar la app.
 - Entrar en la página deployada:
+
+![alt text](image-6.png)
+
+Tenemos un deploy en actions exitoso:
+
+![alt text](image-7.png)
