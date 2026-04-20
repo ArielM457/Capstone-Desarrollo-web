@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import booksReducer from './booksSlice';
+import loansReducer from './loansSlice';
+import wishlistReducer from './wishlistSlice';
 
 export const store = configureStore({
   reducer: {
     books: booksReducer,
+    loans: loansReducer,
+    wishlist: wishlistReducer,
   },
 });
 

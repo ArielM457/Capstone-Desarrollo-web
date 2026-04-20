@@ -8,6 +8,8 @@ const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.H
 const BookDetailPage = lazy(() => import('./pages/BookDetailPage').then(m => ({ default: m.BookDetailPage })));
 const BookReviewsPage = lazy(() => import('./pages/BookReviewsPage').then(m => ({ default: m.BookReviewsPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const LoansPage = lazy(() => import('./pages/LoansPage').then(m => ({ default: m.LoansPage })));
+const WishlistPage = lazy(() => import('./pages/WishlistPage').then(m => ({ default: m.WishlistPage })));
 const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
 
 function PageLoadingFallback() {
@@ -65,6 +67,14 @@ const router = createBrowserRouter([
           {
             path: 'about',
             element: <AboutPage />,
+          },
+          {
+            path: 'loans',
+            element: <LoansPage />,
+          },
+          {
+            path: 'wishlist',
+            element: <WishlistPage />,
           },
           {
             path: 'book/:bookId',

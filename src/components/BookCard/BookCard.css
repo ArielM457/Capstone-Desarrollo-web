@@ -128,3 +128,75 @@
   white-space: nowrap;
   max-width: 110px;
 }
+
+.book-card__loan-actions {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.book-card__loan-status {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.book-card__loan-status--overdue {
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.book-card__loan-button {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 12px;
+  font-weight: 700;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.book-card__loan-button:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.book-card__loan-button--secondary {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+.book-card__loan-button--secondary:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-primary);
+}
+
+.book-card__wishlist-actions {
+  margin-top: 8px;
+}
+
+.book-card__wishlist-button {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px dashed var(--color-primary);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  background-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.book-card__wishlist-button:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.book-card__wishlist-button--active {
+  border-style: solid;
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+}

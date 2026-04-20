@@ -12,6 +12,10 @@ https://replace-with-your-live-url
 - We implemented search with remote data from Open Library
 - We implemented filters by category and several sort options
 - We implemented book cards, detail page, and reviews page
+- We implemented borrow flow with due date tracking
+- We implemented reservation queue for currently borrowed books
+- We implemented persistent user loan history in local storage
+- We implemented wishlist creation and management for future reading
 - We implemented login and logout flow with token persistence
 - We implemented light and dark theme switch
 - We implemented tests with Vitest and Testing Library
@@ -50,6 +54,18 @@ cd backend
 npm install
 npm start
 ```
+
+## Environment Variables
+Frontend and backend read configuration from `.env` files.
+
+```bash
+cp .env.example .env
+cp backend/.env.example backend/.env
+```
+
+- `VITE_API_URL` defines the frontend API base URL.
+- `WISHLIST_STORAGE_PROVIDER` supports `azure_blob` or `local`.
+- `AZURE_STORAGE_CONNECTION_STRING` and `AZURE_BLOB_CONTAINER` are used when provider is `azure_blob`.
 
 ## Scripts
 - npm run dev starts the frontend

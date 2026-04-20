@@ -17,9 +17,45 @@ function formatAuthorNamesForDisplay(authorNames: string[]): string {
 
 interface BookCardProps {
   book: LibraryBook;
+  loanDueDateLabel?: string;
+  isLoanOverdue?: boolean;
+  borrowedByUserName?: string;
+  reservationCount?: number;
+  reservationPosition?: number | null;
+  canBorrow?: boolean;
+  canReserve?: boolean;
+  canReturn?: boolean;
+  hasCurrentUserReservation?: boolean;
+  onBorrow?: () => void;
+  onReserve?: () => void;
+  onReturn?: () => void;
+  onCancelReservation?: () => void;
+  canAddToWishlist?: boolean;
+  canRemoveFromWishlist?: boolean;
+  onAddToWishlist?: () => void;
+  onRemoveFromWishlist?: () => void;
 }
 
-export const BookCard = memo(function BookCard({ book }: BookCardProps) {
+export const BookCard = memo(function BookCard({
+  book,
+  loanDueDateLabel,
+  isLoanOverdue = false,
+  borrowedByUserName,
+  reservationCount = 0,
+  reservationPosition = null,
+  canBorrow = false,
+  canReserve = false,
+  canReturn = false,
+  hasCurrentUserReservation = false,
+  onBorrow,
+  onReserve,
+  onReturn,
+  onCancelReservation,
+  canAddToWishlist = false,
+  canRemoveFromWishlist = false,
+  onAddToWishlist,
+  onRemoveFromWishlist,
+}: BookCardProps) {
   const [hasCoverImageLoadFailed, setHasCoverImageLoadFailed] = useState(false);
 
   function handleCoverImageLoadError() {
@@ -73,6 +109,91 @@ export const BookCard = memo(function BookCard({ book }: BookCardProps) {
               </li>
             ))}
           </ul>
+        )}
+        {(canBorrow || canReserve || canReturn || hasCurrentUserReservation) && (
+          <div className="book-card__loan-actions">
+            {canReturn && loanDueDateLabel && (
+              <p
+                className={`book-card__loan-status ${isLoanOverdue ? 'book-card__loan-status--overdue' : ''}`}
+              >
+                {isLoanOverdue ? `Vencido desde: ${loanDueDateLabel}` : `Vence: ${loanDueDateLabel}`}
+              </p>
+            )}
+
+            {!canReturn && borrowedByUserName && (
+              <p className="book-card__loan-status">Prestado por: {borrowedByUserName}</p>
+            )}
+
+            {hasCurrentUserReservation && reservationPosition !== null && (
+              <p className="book-card__loan-status">
+                Tu reserva está en posición #{reservationPosition}
+              </p>
+            )}
+
+            {!hasCurrentUserReservation && canReserve && reservationCount > 0 && (
+              <p className="book-card__loan-status">
+                {reservationCount} reserva{reservationCount !== 1 ? 's' : ''} en cola
+              </p>
+            )}
+
+            {canBorrow && (
+              <button type="button" className="book-card__loan-button" onClick={onBorrow}>
+                Prestar 14 días
+              </button>
+            )}
+
+            {canReturn && (
+              <button
+                type="button"
+                className="book-card__loan-button book-card__loan-button--secondary"
+                onClick={onReturn}
+              >
+                Devolver libro
+              </button>
+            )}
+
+            {canReserve && !hasCurrentUserReservation && (
+              <button
+                type="button"
+                className="book-card__loan-button book-card__loan-button--secondary"
+                onClick={onReserve}
+              >
+                Reservar libro
+              </button>
+            )}
+
+            {hasCurrentUserReservation && (
+              <button
+                type="button"
+                className="book-card__loan-button book-card__loan-button--secondary"
+                onClick={onCancelReservation}
+              >
+                Cancelar reserva
+              </button>
+            )}
+          </div>
+        )}
+        {(canAddToWishlist || canRemoveFromWishlist) && (
+          <div className="book-card__wishlist-actions">
+            {canAddToWishlist && (
+              <button
+                type="button"
+                className="book-card__wishlist-button"
+                onClick={onAddToWishlist}
+              >
+                Agregar a deseos
+              </button>
+            )}
+            {canRemoveFromWishlist && (
+              <button
+                type="button"
+                className="book-card__wishlist-button book-card__wishlist-button--active"
+                onClick={onRemoveFromWishlist}
+              >
+                Quitar de deseos
+              </button>
+            )}
+          </div>
         )}
       </div>
     </article>
