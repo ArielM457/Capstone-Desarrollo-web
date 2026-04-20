@@ -1,27 +1,15 @@
-const USERS = [
-  { username: 'admin', password: '1234' },
-  { username: 'usuario', password: 'pass' },
-];
+const { USERS, createTokenForUsername, jsonResponse } = require('../common');
 
 module.exports = async function (context, req) {
   const { username, password } = req.body || {};
   const user = USERS.find(u => u.username === username && u.password === password);
 
   if (!user) {
-    context.res = {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Credenciales inválidas' }),
-    };
+    context.res = jsonResponse(401, { error: 'Credenciales inválidas' });
     return;
   }
 
-  const payload = { username: user.username, ts: Date.now() };
-  const token = Buffer.from(JSON.stringify(payload)).toString('base64');
+  const token = createTokenForUsername(user.username);
 
-  context.res = {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token, username: user.username }),
-  };
+  context.res = jsonResponse(200, { token, username: user.username });
 };

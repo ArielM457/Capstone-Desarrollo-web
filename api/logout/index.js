@@ -1,7 +1,7 @@
+const { extractBearerToken, jsonResponse, revokeToken } = require('../common');
+
 module.exports = async function (context, req) {
-  context.res = {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ok: true }),
-  };
+  const token = extractBearerToken(req);
+  revokeToken(token);
+  context.res = jsonResponse(200, { ok: true });
 };

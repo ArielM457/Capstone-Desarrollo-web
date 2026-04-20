@@ -1,28 +1,14 @@
-module.exports = async function (context, req) {
-  const auth = req.headers['authorization'];
+const { jsonResponse, requireAuthenticatedUsername } = require('../common');
 
-  if (!auth || !auth.startsWith('Bearer ')) {
-    context.res = {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'No autorizado' }),
-    };
+module.exports = async function (context, req) {
+  const authResult = requireAuthenticatedUsername(req);
+  if (authResult.errorResponse) {
+    context.res = authResult.errorResponse;
     return;
   }
 
-  try {
-    const token = auth.split(' ')[1];
-    const payload = JSON.parse(Buffer.from(token, 'base64').toString('utf8'));
-    context.res = {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ authenticated: true, username: payload.username }),
-    };
-  } catch {
-    context.res = {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Token inválido' }),
-    };
-  }
+  context.res = jsonResponse(200, {
+    authenticated: true,
+    username: authResult.username,
+  });
 };
