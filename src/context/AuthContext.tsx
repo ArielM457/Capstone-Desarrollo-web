@@ -36,7 +36,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsCheckingAuth(true);
 
     fetch(`${APP_API_URL}/me`, {
-      headers: { Authorization: `Bearer ${persistedToken}` },
+      headers: {
+        Authorization: `Bearer ${persistedToken}`,
+        'X-Auth-Token': persistedToken,
+      },
     })
       .then(response => {
         if (cancelled) {
@@ -80,7 +83,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       fetch(`${APP_API_URL}/logout`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-Auth-Token': token,
+        },
       }).catch(() => {});
     }
     localStorage.removeItem(AUTH_TOKEN_KEY);

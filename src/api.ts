@@ -66,7 +66,10 @@ async function extractApiErrorMessage(response: Response): Promise<string> {
 
 export async function fetchUserWishlist(token: string): Promise<WishlistBook[]> {
   const response = await fetch(`${APP_API_URL}/wishlist`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'X-Auth-Token': token,
+    },
   });
 
   if (!response.ok) {
@@ -85,6 +88,7 @@ export async function addBookToWishlist(
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
+      'X-Auth-Token': token,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(book),
@@ -101,7 +105,10 @@ export async function addBookToWishlist(
 export async function removeBookFromWishlist(token: string, bookId: string): Promise<WishlistBook[]> {
   const response = await fetch(`${APP_API_URL}/wishlist/${encodeURIComponent(bookId)}`, {
     method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'X-Auth-Token': token,
+    },
   });
 
   if (!response.ok) {

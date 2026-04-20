@@ -97,16 +97,49 @@ async function writeWishlistByUsername(username, wishlist) {
   await fs.writeFile(filePath, JSON.stringify(wishlist, null, 2), 'utf8');
 }
 
+function getHeaderValue(req, headerName) {
+  const headers = req?.headers;
+  if (!headers) {
+    return '';
+  }
+
+  if (typeof headers.get === 'function') {
+    return headers.get(headerName) || '';
+  }
+
+  return headers[headerName] || headers[headerName.toLowerCase()] || headers[headerName.toUpperCase()] || '';
+}
+
 function getAuthorizationHeader(req) {
-  return req.headers?.authorization || req.headers?.Authorization || '';
+  return getHeaderValue(req, 'authorization') || getHeaderValue(req, 'Authorization');
+}
+
+function getTokenFromCustomHeader(req) {
+  return getHeaderValue(req, 'x-auth-token') || getHeaderValue(req, 'X-Auth-Token');
 }
 
 function extractBearerToken(req) {
   const authHeader = getAuthorizationHeader(req);
-  if (!authHeader.startsWith('Bearer ')) {
-    return null;
+  if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+    return authHeader.slice('Bearer '.length).trim();
   }
-  return authHeader.slice('Bearer '.length).trim();
+
+  const customHeaderToken = getTokenFromCustomHeader(req);
+  if (typeof customHeaderToken === 'string' && customHeaderToken.trim()) {
+    return customHeaderToken.trim();
+  }
+
+  const queryToken = req?.query?.token;
+  if (typeof queryToken === 'string' && queryToken.trim()) {
+    return queryToken.trim();
+  }
+
+  const bodyToken = req?.body?.token;
+  if (typeof bodyToken === 'string' && bodyToken.trim()) {
+    return bodyToken.trim();
+  }
+
+  return null;
 }
 
 function encodeBase64Url(value) {
