@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { BookOpenText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
+import './LoginPage.css';
 
 const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:3001/api';
 
@@ -40,7 +42,7 @@ export function LoginPage() {
     <main className="login-page">
       <div className="login-page__card">
         <div className="login-page__brand">
-          <span aria-hidden="true"></span>
+          <BookOpenText aria-hidden="true" size={28} />
           <h1>JULibrary</h1>
         </div>
         <form className="login-form" onSubmit={handleSubmit}>

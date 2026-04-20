@@ -1,7 +1,9 @@
 import { useState, memo } from 'react';
+import { BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import type { LibraryBook } from '../types';
-import { buildBookCoverImageUrl } from '../api';
+import type { LibraryBook } from '../../types';
+import { buildBookCoverImageUrl } from '../../api';
+import './BookCard.css';
 
 function resolveAvailabilityStatusDisplayText(status: LibraryBook['availabilityStatus']): string {
   return status === 'available' ? 'Disponible' : 'Prestado';
@@ -33,7 +35,7 @@ export const BookCard = memo(function BookCard({ book }: BookCardProps) {
       <div className="book-card__cover-container">
         {shouldRenderCoverPlaceholder ? (
           <div className="book-card__cover-placeholder" aria-label="Sin portada disponible">
-            <span className="book-card__cover-placeholder-icon">📖</span>
+            <BookOpen className="book-card__cover-placeholder-icon" aria-hidden="true" size={40} />
           </div>
         ) : (
           <img

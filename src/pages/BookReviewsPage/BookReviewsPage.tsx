@@ -1,4 +1,6 @@
 import { useParams } from 'react-router-dom';
+import { Star } from 'lucide-react';
+import './BookReviewsPage.css';
 
 interface MockReview {
   id: string;
@@ -27,8 +29,18 @@ function generateMockReviewsForBook(bookId: string): MockReview[] {
   return MOCK_REVIEWS_BY_BOOK[bookId];
 }
 
-function renderStarRating(rating: number): string {
-  return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+function renderStarRating(rating: number) {
+  return Array.from({ length: 5 }).map((_, index) => {
+    const isFilledStar = index < rating;
+    return (
+      <Star
+        key={index}
+        className={isFilledStar ? 'book-reviews__star book-reviews__star--filled' : 'book-reviews__star'}
+        aria-hidden="true"
+        size={14}
+      />
+    );
+  });
 }
 
 export function BookReviewsPage() {

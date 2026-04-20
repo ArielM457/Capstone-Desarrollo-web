@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { Search, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../store/store';
-import { setSearchQuery, fetchBooks } from '../store/booksSlice';
+import type { RootState, AppDispatch } from '../../store/store';
+import { setSearchQuery, fetchBooks } from '../../store/booksSlice';
+import './SearchBar.css';
 
 function buildSearchInputAriaLabel(currentQuery: string): string {
   return currentQuery
@@ -35,7 +37,7 @@ export function SearchBar() {
   return (
     <div className="search-bar">
       <div className="search-bar__input-wrapper">
-        <span className="search-bar__search-icon" aria-hidden="true"></span>
+        <Search className="search-bar__search-icon" aria-hidden="true" size={16} />
         <input
           type="text"
           className="search-bar__input"
@@ -50,7 +52,7 @@ export function SearchBar() {
             onClick={clearSearchInputField}
             aria-label="Limpiar búsqueda"
           >
-            ✕
+            <X aria-hidden="true" size={14} />
           </button>
         )}
       </div>

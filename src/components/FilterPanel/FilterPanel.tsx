@@ -1,8 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../store/store';
-import { setFilterCategory, setSortCriterion } from '../store/booksSlice';
-import { SORT_OPTIONS, FILTER_CATEGORIES } from '../utils/enums';
-import type { SortCriterion, FilterCategory } from '../utils/enums';
+import type { RootState, AppDispatch } from '../../store/store';
+import { setFilterCategory, setSortCriterion } from '../../store/booksSlice';
+import { SORT_OPTIONS, FILTER_CATEGORIES } from '../../utils/enums';
+import type { SortCriterion, FilterCategory } from '../../utils/enums';
+import './FilterPanel.css';
 
 export function FilterPanel() {
   const dispatch = useDispatch<AppDispatch>();

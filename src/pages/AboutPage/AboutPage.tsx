@@ -1,4 +1,4 @@
-import { useThemeContext } from '../context/ThemeContext';
+import './AboutPage.css';
 
 const infoItems = [
   { id: 1, label: 'Versión', val: '1.0' },
@@ -6,11 +6,6 @@ const infoItems = [
   { id: 3, label: 'Framework', val: 'React 19 + Vite' },
   { id: 4, label: 'Enrutamiento', val: 'Enrutamientocon react 19' },
 ];
-
-function getThemeStyle(modeActual: string) {
-  if (modeActual === 'dark') return 'about-page about-page--dark';
-  return 'about-page';
-}
 
 function renderInfoBlock(itemData: { id: number; label: string; val: string }) {
   return (
@@ -22,9 +17,6 @@ function renderInfoBlock(itemData: { id: number; label: string; val: string }) {
 }
 
 export function AboutPage() {
-  const ctxTema = useThemeContext();
-  const claseActual = getThemeStyle(ctxTema.currentThemeMode);
-
   const teamData = [
     { nombre: 'Ariel', rol: 'Desarrollado web' },
   ];
@@ -38,7 +30,7 @@ export function AboutPage() {
   }
 
   return (
-    <main className={claseActual}>
+    <main className="about-page">
       <section className="about-page__section">
         <h1 className="about-page__title">Acerca de JU Library</h1>
         <p className="about-page__desc">

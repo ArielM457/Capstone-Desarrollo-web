@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
+import { AlertTriangle, SearchX } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../store/store';
-import { fetchBooks } from '../store/booksSlice';
-import { filterByCategory } from '../utils/filterBooks';
-import { sortByTitleAsc, sortByAuthorAsc, sortByYearDesc, sortByPopularityDesc } from '../utils/sortBooks';
-import { BookCard } from './BookCard';
+import type { RootState, AppDispatch } from '../../store/store';
+import { fetchBooks } from '../../store/booksSlice';
+import { filterByCategory } from '../../utils/filterBooks';
+import { sortByTitleAsc, sortByAuthorAsc, sortByYearDesc, sortByPopularityDesc } from '../../utils/sortBooks';
+import { BookCard } from '../BookCard';
+import './BookList.css';
 
 function renderLoadingSkeletonGrid() {
   return (
@@ -24,7 +26,7 @@ function renderLoadingSkeletonGrid() {
 function renderEmptyResultsMessage(searchQuery: string) {
   return (
     <div className="book-list__empty-state" role="status">
-      <span className="book-list__empty-state-icon" aria-hidden="true">🔎</span>
+      <SearchX className="book-list__empty-state-icon" aria-hidden="true" size={40} />
       <p className="book-list__empty-state-text">
         {searchQuery
           ? `No se encontraron libros para "${searchQuery}"`
@@ -58,7 +60,7 @@ export function BookList() {
   if (errorMessage) {
     return (
       <div className="book-list__error-state" role="alert">
-        <span className="book-list__error-icon" aria-hidden="true">⚠️</span>
+        <AlertTriangle className="book-list__error-icon" aria-hidden="true" size={40} />
         <p className="book-list__error-text">{errorMessage}</p>
       </div>
     );

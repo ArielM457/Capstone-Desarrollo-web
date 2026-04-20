@@ -1,0 +1,8 @@
+.home-page__controls-section {
+  margin-bottom: 22px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  box-shadow: 0 4px 16px var(--color-card-shadow);
+}

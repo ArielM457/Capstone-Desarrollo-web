@@ -1,16 +1,18 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useThemeContext } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
+import { BookOpenText, Moon, Sun } from 'lucide-react';
+import { useThemeContext } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
+import './Header.css';
 
 const navLinks = [
   { to: '/', label: 'Inicio', fin: true },
   { to: '/about', label: 'Acerca de', fin: false },
 ];
 
-function getIconLabel(tema: 'light' | 'dark'): { icon: string; label: string } {
+function getToggleThemeLabel(tema: 'light' | 'dark'): string {
   return tema === 'light'
-    ? { icon: '', label: 'Modo oscuro' }
-    : { icon: '', label: 'Modo claro' };
+    ? 'Modo oscuro'
+    : 'Modo claro';
 }
 
 function buildNavItem(itemData: { to: string; label: string; fin: boolean }, idx: number) {
@@ -33,7 +35,7 @@ export function Header() {
   const { currentThemeMode, toggleThemeMode } = useThemeContext();
   const { token, logout } = useAuth();
   const navigate = useNavigate();
-  const iconInfo = getIconLabel(currentThemeMode);
+  const toggleThemeLabel = getToggleThemeLabel(currentThemeMode);
 
   function handleLogout() {
     logout();
@@ -44,7 +46,7 @@ export function Header() {
     <header className="site-header">
       <div className="site-header__inner">
         <div className="site-header__brand">
-          <span className="site-header__brand-icon" aria-hidden="true"></span>
+          <BookOpenText className="site-header__brand-icon" aria-hidden="true" size={22} />
           <h1 className="site-header__brand-name">JULibrary</h1>
         </div>
 
@@ -58,12 +60,14 @@ export function Header() {
           <button
             className="theme-toggle-button"
             onClick={toggleThemeMode}
-            aria-label={`Cambiar a ${iconInfo.label}`}
+            aria-label={`Cambiar a ${toggleThemeLabel}`}
           >
-            <span className="theme-toggle-button__icon" aria-hidden="true">
-              {iconInfo.icon}
-            </span>
-            <span className="theme-toggle-button__label">{iconInfo.label}</span>
+            {currentThemeMode === 'light' ? (
+              <Moon className="theme-toggle-button__icon" aria-hidden="true" size={16} />
+            ) : (
+              <Sun className="theme-toggle-button__icon" aria-hidden="true" size={16} />
+            )}
+            <span className="theme-toggle-button__label">{toggleThemeLabel}</span>
           </button>
           {token && (
             <button
@@ -71,7 +75,7 @@ export function Header() {
               onClick={handleLogout}
               aria-label="Cerrar sesión"
             >
-              Salir
+              Cerrar sesión
             </button>
           )}
         </div>

@@ -1,6 +1,8 @@
 import { useParams, Link, Outlet, useMatch } from 'react-router-dom';
-import { useFetch } from '../hooks/useFetch';
-import { buildBookCoverImageUrl } from '../api';
+import { ArrowLeft, BookOpen } from 'lucide-react';
+import { useFetch } from '../../hooks/useFetch';
+import { buildBookCoverImageUrl } from '../../api';
+import './BookDetailPage.css';
 
 interface OpenLibraryWorkDetail {
   title: string;
@@ -35,7 +37,10 @@ export function BookDetailPage() {
   if (error || !workDetail) {
     return (
       <main className="app-layout__main-content">
-        <Link to="/" className="book-detail__back-link">← Volver al catálogo</Link>
+        <Link to="/" className="book-detail__back-link">
+          <ArrowLeft aria-hidden="true" size={16} />
+          Volver al catálogo
+        </Link>
         <p className="book-detail__error">{error ?? 'Libro no encontrado.'}</p>
       </main>
     );
@@ -45,7 +50,10 @@ export function BookDetailPage() {
 
   return (
     <main className="app-layout__main-content">
-      <Link to="/" className="book-detail__back-link">← Volver al catálogo</Link>
+      <Link to="/" className="book-detail__back-link">
+        <ArrowLeft aria-hidden="true" size={16} />
+        Volver al catálogo
+      </Link>
 
       <article className="book-detail">
         <div className="book-detail__cover-container">
@@ -57,32 +65,39 @@ export function BookDetailPage() {
             />
           ) : (
             <div className="book-detail__cover-placeholder">
-              <span>📖</span>
+              <BookOpen aria-hidden="true" size={56} />
             </div>
           )}
         </div>
 
         <div className="book-detail__info">
-          <h1 className="book-detail__title">{workDetail.title}</h1>
+          <header className="book-detail__header">
+            <h1 className="book-detail__title">{workDetail.title}</h1>
+            {workDetail.first_publish_date && (
+              <p className="book-detail__publish-date">
+                Publicado: {workDetail.first_publish_date}
+              </p>
+            )}
+          </header>
 
-          {workDetail.first_publish_date && (
-            <p className="book-detail__publish-date">
-              Publicado: {workDetail.first_publish_date}
+          <section className="book-detail__description-block" aria-label="Descripción del libro">
+            <h2 className="book-detail__section-title">Descripción</h2>
+            <p className="book-detail__description">
+              {resolveDescriptionText(workDetail.description)}
             </p>
-          )}
-
-          <p className="book-detail__description">
-            {resolveDescriptionText(workDetail.description)}
-          </p>
+          </section>
 
           {workDetail.subjects && workDetail.subjects.length > 0 && (
-            <ul className="book-detail__subjects">
-              {workDetail.subjects.slice(0, 5).map((subject, index) => (
-                <li key={index} className="book-card__subject-tag">
-                  {subject}
-                </li>
-              ))}
-            </ul>
+            <section className="book-detail__subjects-block" aria-label="Temas relacionados">
+              <h2 className="book-detail__section-title">Temas</h2>
+              <ul className="book-detail__subjects">
+                {workDetail.subjects.slice(0, 8).map((subject, index) => (
+                  <li key={index} className="book-detail__subject-tag">
+                    {subject}
+                  </li>
+                ))}
+              </ul>
+            </section>
           )}
 
           <nav className="book-detail__tabs">
