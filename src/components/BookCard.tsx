@@ -29,7 +29,7 @@ export const BookCard = memo(function BookCard({ book }: BookCardProps) {
   const workId = book.bookId.replace('/works/', '');
 
   return (
-    <article className="book-card" role="article">
+    <article className="book-card">
       <div className="book-card__cover-container">
         {shouldRenderCoverPlaceholder ? (
           <div className="book-card__cover-placeholder" aria-label="Sin portada disponible">
@@ -65,8 +65,8 @@ export const BookCard = memo(function BookCard({ book }: BookCardProps) {
         )}
         {book.subjectCategories.length > 0 && (
           <ul className="book-card__subject-tags" aria-label="Categorías">
-            {book.subjectCategories.slice(0, 3).map((subject, subjectIndex) => (
-              <li key={subjectIndex} className="book-card__subject-tag">
+            {book.subjectCategories.slice(0, 3).map(subject => (
+              <li key={subject} className="book-card__subject-tag">
                 {subject}
               </li>
             ))}

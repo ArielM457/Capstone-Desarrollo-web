@@ -10,11 +10,11 @@ describe('useFetch', () => {
     vi.restoreAllMocks();
   });
 
-  it('loading inic', () => {
-    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: true,
-      json: async () => ({ name: 'test' }),
-    });
+  it('shows loading state at start', () => {
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockImplementation(
+      () => new Promise(() => {})
+    );
+
     const { result } = renderHook(() => useFetch('http://test.com/api'));
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeNull();
