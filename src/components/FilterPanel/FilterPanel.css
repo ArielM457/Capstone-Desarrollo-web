@@ -3,7 +3,8 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
-  justify-content: space-between;
+  justify-content: flex-start;
+  width: min(100%, 980px);
 }
 
 .filter-panel__categories {
@@ -39,6 +40,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-left: auto;
 }
 
 .filter-panel__sort-label {
@@ -70,10 +72,12 @@
   .filter-panel {
     flex-direction: column;
     align-items: flex-start;
+    width: 100%;
   }
 
   .filter-panel__sort-section {
     width: 100%;
+    margin-left: 0;
   }
 
   .filter-panel__sort-select {
