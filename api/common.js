@@ -1,16 +1,18 @@
 const fs = require('fs/promises');
 const path = require('path');
+const crypto = require('crypto');
 
 const USERS = [
   { username: 'admin', password: '1234' },
   { username: 'usuario', password: 'pass' },
 ];
 
-const activeTokens = new Map();
 const storageProvider = process.env.WISHLIST_STORAGE_PROVIDER || 'local';
 const azureConnectionString = process.env.AZURE_STORAGE_CONNECTION_STRING || '';
 const azureContainerName = process.env.AZURE_BLOB_CONTAINER || 'julibrary-data';
 const localStoragePath = path.join(__dirname, 'data');
+const tokenSecret = process.env.AUTH_TOKEN_SECRET || 'dev-only-secret-change-this-in-production';
+const tokenTtlMs = Number.parseInt(process.env.AUTH_TOKEN_TTL_MS || '', 10) || 1000 * 60 * 60 * 24 * 7;
 
 let azureContainerClient = null;
 
@@ -107,17 +109,69 @@ function extractBearerToken(req) {
   return authHeader.slice('Bearer '.length).trim();
 }
 
+function encodeBase64Url(value) {
+  return Buffer.from(value, 'utf8').toString('base64url');
+}
+
+function decodeBase64Url(value) {
+  return Buffer.from(value, 'base64url').toString('utf8');
+}
+
+function signPayload(encodedPayload) {
+  return crypto.createHmac('sha256', tokenSecret).update(encodedPayload).digest('base64url');
+}
+
+function isValidSignature(encodedPayload, providedSignature) {
+  const expectedSignature = signPayload(encodedPayload);
+  if (expectedSignature.length !== providedSignature.length) {
+    return false;
+  }
+  return crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(providedSignature));
+}
+
+function getUsernameFromSignedToken(token) {
+  if (typeof token !== 'string' || !token.includes('.')) {
+    return null;
+  }
+
+  const [encodedPayload, signature] = token.split('.');
+  if (!encodedPayload || !signature) {
+    return null;
+  }
+
+  if (!isValidSignature(encodedPayload, signature)) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(decodeBase64Url(encodedPayload));
+    if (!payload || typeof payload.username !== 'string') {
+      return null;
+    }
+    if (typeof payload.exp !== 'number' || payload.exp < Date.now()) {
+      return null;
+    }
+    return payload.username;
+  } catch {
+    return null;
+  }
+}
+
 function createTokenForUsername(username) {
-  const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
-  activeTokens.set(token, username);
+  const payload = {
+    username,
+    exp: Date.now() + tokenTtlMs,
+  };
+  const encodedPayload = encodeBase64Url(JSON.stringify(payload));
+  const signature = signPayload(encodedPayload);
+  const token = `${encodedPayload}.${signature}`;
   return token;
 }
 
 function revokeToken(token) {
-  if (!token) {
-    return;
-  }
-  activeTokens.delete(token);
+  // Stateless tokens do not require server-side session cleanup.
+  // Logout is handled by removing the token on the client side.
+  void token;
 }
 
 function requireAuthenticatedUsername(req) {
@@ -125,7 +179,7 @@ function requireAuthenticatedUsername(req) {
   if (!token) {
     return { errorResponse: jsonResponse(401, { error: 'No autorizado' }) };
   }
-  const username = activeTokens.get(token) ?? null;
+  const username = getUsernameFromSignedToken(token);
   if (!username) {
     return { errorResponse: jsonResponse(401, { error: 'No autorizado' }) };
   }

@@ -21,7 +21,10 @@ function PageLoadingFallback() {
 }
 
 function ProtectedRoute() {
-  const { token } = useAuth();
+  const { token, isCheckingAuth } = useAuth();
+  if (isCheckingAuth) {
+    return <PageLoadingFallback />;
+  }
   if (!token) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
