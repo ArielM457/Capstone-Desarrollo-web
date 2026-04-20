@@ -26,7 +26,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(() => Boolean(localStorage.getItem(AUTH_TOKEN_KEY)));
 
   useEffect(() => {
-    if (!token) {
+    const persistedToken = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (!persistedToken) {
       setIsCheckingAuth(false);
       return;
     }
@@ -35,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsCheckingAuth(true);
 
     fetch(`${APP_API_URL}/me`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${persistedToken}` },
     })
       .then(response => {
         if (cancelled) {
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, []);
 
   function login(newToken: string, newUsername: string) {
     localStorage.setItem(AUTH_TOKEN_KEY, newToken);
