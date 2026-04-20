@@ -13,7 +13,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m
 function PageLoadingFallback() {
   return (
     <main className="app-layout__main-content">
-      <p className="book-detail__loading">Cargand...</p>
+      <p className="app-layout__loading">Cargando...</p>
     </main>
   );
 }
