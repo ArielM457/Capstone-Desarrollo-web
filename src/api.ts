@@ -103,13 +103,29 @@ export async function addBookToWishlist(
 }
 
 export async function removeBookFromWishlist(token: string, bookId: string): Promise<WishlistBook[]> {
-  const response = await fetch(`${APP_API_URL}/wishlist/${encodeURIComponent(bookId)}`, {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'X-Auth-Token': token,
+  };
+  const encodedBookId = encodeURIComponent(bookId);
+  let response = await fetch(`${APP_API_URL}/wishlist?bookId=${encodedBookId}`, {
     method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'X-Auth-Token': token,
-    },
+    headers,
   });
+
+  if (response.status === 404) {
+    response = await fetch(`${APP_API_URL}/wishlist/${encodedBookId}`, {
+      method: 'DELETE',
+      headers,
+    });
+  }
+
+  if (response.status === 404) {
+    response = await fetch(`${APP_API_URL}/wishlistDelete/${encodedBookId}`, {
+      method: 'DELETE',
+      headers,
+    });
+  }
 
   if (!response.ok) {
     throw new Error(await extractApiErrorMessage(response));

@@ -59,5 +59,29 @@ module.exports = async function (context, req) {
     }
   }
 
+  if (method === 'DELETE') {
+    const queryBookId = typeof req.query?.bookId === 'string' ? req.query.bookId : '';
+    const bodyBookId = typeof req.body?.bookId === 'string' ? req.body.bookId : '';
+    const rawBookId = queryBookId || bodyBookId;
+    const targetBookId = decodeURIComponent(rawBookId || '');
+
+    if (!targetBookId) {
+      context.res = jsonResponse(400, { error: 'bookId inválido' });
+      return;
+    }
+
+    try {
+      const wishlist = await readWishlistByUsername(authResult.username);
+      const filteredWishlist = wishlist.filter(item => item.bookId !== targetBookId);
+      await writeWishlistByUsername(authResult.username, filteredWishlist);
+      context.res = jsonResponse(200, { items: filteredWishlist });
+      return;
+    } catch (error) {
+      context.log.error('Error al eliminar wishlist:', error);
+      context.res = jsonResponse(500, { error: 'No se pudo eliminar el libro de la lista de deseos' });
+      return;
+    }
+  }
+
   context.res = jsonResponse(405, { error: 'Método no permitido' });
 };
