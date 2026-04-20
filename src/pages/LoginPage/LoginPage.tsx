@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { BookOpenText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { APP_API_URL } from '../../config';
 import './LoginPage.css';
-
-const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:3001/api';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -19,7 +18,7 @@ export function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/login`, {
+      const res = await fetch(`${APP_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -29,7 +28,7 @@ export function LoginPage() {
         throw new Error(data.error || 'Error al iniciar sesión');
       }
       const { token } = await res.json();
-      login(token);
+      login(token, username.trim());
       navigate('/');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error inesperado');

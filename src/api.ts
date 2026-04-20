@@ -1,5 +1,6 @@
-import type { LibraryBook } from './types';
+import type { LibraryBook, WishlistBook } from './types';
 import { BOOK_DEFAULTS } from './utils/enums';
+import { APP_API_URL } from './config';
 
 const search_endpoint = 'https://openlibrary.org/search.json';
 const cover_endpoint = 'https://covers.openlibrary.org/b/id';
@@ -49,4 +50,64 @@ export async function fetchBooksBySearchQuery(
 
 export async function fetchDefaultLibraryCatalog(): Promise<LibraryBook[]> {
   return fetchBooksBySearchQuery('classic world literature fiction science');
+}
+
+async function extractApiErrorMessage(response: Response): Promise<string> {
+  try {
+    const payload = await response.json();
+    if (payload && typeof payload.error === 'string') {
+      return payload.error;
+    }
+  } catch {
+    // no-op
+  }
+  return `Request failed with status ${response.status}`;
+}
+
+export async function fetchUserWishlist(token: string): Promise<WishlistBook[]> {
+  const response = await fetch(`${APP_API_URL}/wishlist`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response));
+  }
+
+  const payload = await response.json();
+  return Array.isArray(payload.items) ? payload.items : [];
+}
+
+export async function addBookToWishlist(
+  token: string,
+  book: Pick<WishlistBook, 'bookId' | 'bookTitle' | 'authorName' | 'coverImageId'>
+): Promise<WishlistBook[]> {
+  const response = await fetch(`${APP_API_URL}/wishlist`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(book),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response));
+  }
+
+  const payload = await response.json();
+  return Array.isArray(payload.items) ? payload.items : [];
+}
+
+export async function removeBookFromWishlist(token: string, bookId: string): Promise<WishlistBook[]> {
+  const response = await fetch(`${APP_API_URL}/wishlist/${encodeURIComponent(bookId)}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response));
+  }
+
+  const payload = await response.json();
+  return Array.isArray(payload.items) ? payload.items : [];
 }

@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from '../store/store';
 import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
 import { Header } from '../components/Header';
@@ -7,11 +9,13 @@ import { Header } from '../components/Header';
 const renderHeader = () =>
   render(
     <MemoryRouter>
-      <AuthProvider>
-        <ThemeProvider>
-          <Header />
-        </ThemeProvider>
-      </AuthProvider>
+      <Provider store={store}>
+        <AuthProvider>
+          <ThemeProvider>
+            <Header />
+          </ThemeProvider>
+        </AuthProvider>
+      </Provider>
     </MemoryRouter>
   );
 
